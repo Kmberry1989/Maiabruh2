@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dad's Legal Rights and Options</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f9f9f9;
+        }
+        .controls {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #playBtn { background-color: #2e7d32; color: white; }
+        #pauseBtn { background-color: #f1c40f; color: white; }
+        #stopBtn { background-color: #e74c3c; color: white; }
+        button:hover { opacity: 0.9; }
+        
+        .content-box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        h1 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+        h2 { color: #1b5e20; margin-top: 30px; }
+        
+        .sentence {
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background 0.1s ease;
+        }
+        .sentence:hover {
+            background-color: #f0f3f4;
+        }
+        .highlight {
+            background-color: #c8e6c9 !important;
+            font-weight: 500;
+            color: #000;
+        }
+        .law-box {
+            background-color: #efebe9;
+            border-left: 5px solid #5d4037;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button id="playBtn" onclick="startReading()">▶ Play / Resume</button>
+        <button id="pauseBtn" onclick="pauseReading()">⏸ Pause</button>
+        <button id="stopBtn" onclick="stopReading()">⏹ Stop</button>
+    </div>
+
+    <div class="content-box" id="textContainer">
+        <h1>Information for Dad: Your Right to Press Charges</h1>
+        
+        <p>
+            <span class="sentence">If you change your mind and want to press criminal charges against Maia, you absolutely can.</span>
+            <span class="sentence">Even though you initially told the police officers that you did not want to press charges, that does not close the case forever.</span>
+            <span class="sentence">In Indiana, the ultimate decision to file formal criminal charges belongs to the county prosecutor, not to the victim or the police.</span>
+            <span class="sentence">Because the police already responded to the scene and witnessed the video evidence of her behavior, a formal record of the incident already exists.</span>
+        </p>
+
+        <div class="law-box">
+            <h2>The Legal Deadlines (Statute of Limitations)</h2>
+            <p>
+                <span class="sentence">Under Indiana law, you have a significant amount of time to change your statement and cooperate with the state.</span><br><br>
+                <span class="sentence">For Domestic Battery and simple assault, which is a Class A misdemeanor, the state gives you up to two full years from the date of the incident to move forward with charges.</span><br><br>
+                <span class="sentence">For Residential Entry, which involves charging at the door and forcefully breaking back into your home, the crime is classified as a Level 6 Felony.</span>
+                <span class="sentence">For this felony charge, the state has up to five full years to file formal charges against her.</span>
+            </p>
+        </div>
+
+        <h2>Why Moving Forward Quickly is Safer for Your Home</h2>
+        <p>
+            <span class="sentence">Although the law gives you two to five years to act, changing your mind right now is the fastest way to secure your home.</span>
+            <span class="sentence">First, because the state has recently filed a formal probation violation against Maia, a fresh criminal accusation gives the prosecutor immediate leverage.</span>
+            <span class="sentence">The prosecutor can request that a judge immediately revoke her current bond and issue an arrest warrant.</span>
+            <span class="sentence">If the judge signs this warrant, the police will arrest her and hold her in jail long before her scheduled June court date.</span>
+            <span class="sentence">Second, moving forward now ensures that the responding officers' memories are fresh and that their body camera footage is easily preserved.</span>
+            <span class="sentence">Finally, having an active criminal case for domestic assault against her completely undermines any defense she has to stay in your house during a civil eviction.</span>
+        </p>
+
+        <h2>Exactly How to Change Your Mind Tomorrow</h2>
+        <p>
+            <span class="sentence">You do not need to wait for the police to return to your house to fix this situation.</span>
+            <span class="sentence">You can take action by calling the Logansport Police Department non-emergency line at (574) 753-4101.</span>
+            <span class="sentence">Give them the date of the incident, and tell them that you were shaken up at the time but now wish to provide a formal statement to press charges for your own safety.</span>
+            <span class="sentence">Alternatively, you can walk directly into the Cass County Prosecutor's Office located inside the courthouse at 200 Court Park.</span>
+            <span class="sentence">Tell the clerk or a victim advocate that you are an elderly victim of domestic abuse and want to ensure the state moves forward with the assault and break-in charges.</span>
+        </p>
+    </div>
+
+    <script>
+        let synth = window.speechSynthesis;
+        let sentences = document.querySelectorAll('.sentence');
+        let currentIndex = 0;
+        let utterance = null;
+
+        sentences.forEach((sentence, index) => {
+            sentence.setAttribute('id', 's_' + index);
+            sentence.addEventListener('click', () => {
+                stopReading();
+                currentIndex = index;
+                startReading();
+            });
+        });
+
+        function startReading() {
+            if (synth.speaking && synth.paused) {
+                synth.resume();
+                return;
+            }
+            
+            if (currentIndex >= sentences.length) {
+                currentIndex = 0;
+            }
+
+            speakSentence();
+        }
+
+        function speakSentence() {
+            if (currentIndex >= sentences.length) {
+                stopReading();
+                return;
+            }
+
+            sentences.forEach(s => s.classList.remove('highlight'));
+            
+            let currentElem = document.getElementById('s_' + currentIndex);
+            currentElem.classList.add('highlight');
+            currentElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            utterance = new SpeechSynthesisUtterance(currentElem.innerText);
+            
+            // Set to a deliberate, easy-to-understand pace for seniors
+            utterance.rate = 0.85; 
+
+            utterance.onend = function() {
+                currentIndex++;
+                speakSentence();
+            };
+
+            utterance.onerror = function() {
+                stopReading();
+            };
+
+            synth.speak(utterance);
+        }
+
+        function pauseReading() {
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+            }
+        }
+
+        function stopReading() {
+            synth.cancel();
+            sentences.forEach(s => s.classList.remove('highlight'));
+        }
+    </script>
+</body>
+</html>
